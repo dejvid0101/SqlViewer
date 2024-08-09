@@ -142,5 +142,25 @@ namespace SqlViewer.Dal
                 }
             }
         }
+
+        public DataTable ExecuteSelectCommand(string sqlQuery)
+        {
+            DataTable dataTable = new DataTable();
+
+            using (var connection = new SqlConnection(cs))
+            {
+                connection.Open();
+
+                using (var command = new SqlCommand(sqlQuery, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+
+            return dataTable;
+        }
     }
 }

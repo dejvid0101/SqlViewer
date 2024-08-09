@@ -13,5 +13,7 @@ namespace SqlViewer.Dal
         IEnumerable<Procedure> GetProcedures(Database database);
         void LogIn(string server, string username, string password);
         int ExecuteCustomCommand(string sqlQuery);
+        DataTable ExecuteSelectCommand(string sqlQuery);
+
     }
 }

@@ -140,15 +140,33 @@ namespace SqlViewer.View
 
             try
             {
-                // Execute the SQL statement using the repository
-                int affectedRows = RepositoryFactory.GetRepository().ExecuteCustomCommand(sqlQuery);
+                // If the SQL query is a SELECT statement, execute it and display the results
+                if (sqlQuery.Trim().Contains("SELECT", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Execute the SELECT query and get the results as a DataTable
+                    DataTable results = RepositoryFactory.GetRepository().ExecuteSelectCommand(sqlQuery);
 
-                // Display the number of affected rows in tbDisplayOnly textbox
-                tbDisplayOnly.Text = $"Query executed successfully. Rows affected: {affectedRows}";
+                    // Check if the results contain any rows
+                    if (results.Rows.Count > 0)
+                    {
+                        // Instantiate and display the SelectResultsForm with the results
+                        SelectResultsForm resultsForm = new SelectResultsForm(results);
+                        resultsForm.ShowDialog();  // Display the form modally
+                    }
+                    else
+                    {
+                        MessageBox.Show("The query did not return any results.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    // For non-SELECT queries (INSERT, UPDATE, DELETE), execute the command
+                    int affectedRows = RepositoryFactory.GetRepository().ExecuteCustomCommand(sqlQuery);
+                    tbDisplayOnly.Text = $"Query executed successfully. Rows affected: {affectedRows}";
+                }
             }
             catch (Exception ex)
             {
-                // Display any errors in tbDisplayOnly textbox
                 tbDisplayOnly.Text = $"Error executing query: {ex.Message}";
             }
         }
